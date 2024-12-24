@@ -60,8 +60,16 @@ function agregarProducto(){
         alert("por favor ingrese valores validos")
         return
     }
-    let producto = new Obj (name,pri,stock)    
+    let p = new Obj (name,pri,stock)    
     lista.push(p)
     console.log(list)
+}
+function buscarObj() {
+    let buscar = prompt("Ingrese objeto a buscar")
+    let resultado = list.filter((x)=>x.name.toUpperCase().includes(buscar.toUpperCase()))
+    if (resultado.length>0){
+        console.table(resultado)
+    }else{
+        alert("no se encontro")
     }
-
+}
