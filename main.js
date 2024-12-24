@@ -35,3 +35,44 @@ function login() {
 }
 
 login();
+
+
+const Obj = function(name, pri, stock){
+    this.name= name
+    this.pri= pri
+    this.stock = stock
+}
+let o1  = new Obj("alcohol",1500,30)
+let o2  = new Obj("mascara facial",15000,10)
+let o3  = new Obj("crema para manos",5000,20)
+let o4  = new Obj("aposito",500,500)
+let o5  = new Obj("Gasa",500,1000)
+let o6  = new Obj("aguja",600,700)
+let o7  = new Obj("jeringa",700,700)
+
+let list = [o1,o2,o3,o4,o5,o6,o7]
+function agregarObj(){
+    let name= prompt("ingresa el nombre del producto")
+    let pri = prompt("ingresa el precio del producto")
+    let stock = prompt("ingresa el stock del producto")
+    
+    if(isNaN(pri) || isNaN(stock) || name == ""){
+        alert("por favor ingrese valores validos")
+        return
+    }
+    pri = parseInt(pri);
+    stock = parseInt(stock);
+
+    let p = new Obj (name,pri,stock)    
+    list.push(p)
+    console.log(list)
+}
+function buscarObj() {
+    let buscar = prompt("Ingrese objeto a buscar")
+    let resultado = list.filter((x)=>x.name.toUpperCase().includes(buscar.toUpperCase()))
+    if (resultado.length>0){
+        console.table(resultado)
+    }else{
+        alert("no se encontro")
+    }
+}
