@@ -142,3 +142,34 @@ if (agregar) agregar.addEventListener("click", agregarObj);
 
 let filtrar = document.getElementById("filtrar");
 if (filtrar) filtrar.addEventListener("click", buscarObj);
+
+
+let log = document.getElementById("login");
+if(log) log.addEventListener("click",login);
+
+
+
+let objeto = document.getElementById("object");
+list.forEach(obj =>{
+    let card = document.createElement("div");
+    card.style.border = "1px solid #ccc";
+    card.style.textAlign = "center";
+
+    
+    let nombre = document.createElement("h2");
+    nombre.textContent = obj.name;
+
+    let precio = document.createElement("p");
+    precio.textContent = `Precio: $${obj.pri}`;
+
+    let stock = document.createElement("p");
+    stock.textContent = `Stock: ${obj.stock}`;
+
+    card.appendChild(nombre);
+    card.appendChild(precio);
+    card.appendChild(stock);
+    objeto.appendChild(card);
+}
+
+)
+
