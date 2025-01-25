@@ -33,19 +33,20 @@ function login() {
     } while (identificar);
 }
 
-const Obj = function (name, pri, stock) {
+const Obj = function (name, pri, stock, img) {
     this.name = name;
     this.pri = pri;
     this.stock = stock;
+    this.img = img;
 };
 
-let o1 = new Obj("alcohol", 1500, 30);
-let o2 = new Obj("mascara facial", 15000, 10);
-let o3 = new Obj("crema para manos", 5000, 20);
-let o4 = new Obj("aposito", 500, 500);
-let o5 = new Obj("Gasa", 500, 1000);
-let o6 = new Obj("aguja", 600, 700);
-let o7 = new Obj("jeringa", 700, 700);
+let o1 = new Obj("alcohol", 1500, 30, "images/alcohol.jpeg");
+let o2 = new Obj("mascara facial", 15000, 10, "images/mascara.jpeg");
+let o3 = new Obj("crema para manos", 5000, 20, "images/cremamanos.jpeg");
+let o4 = new Obj("aposito", 500, 500, "images/apositos.jpeg");
+let o5 = new Obj("Gasa", 500, 1000, "images/gasa.jpeg");
+let o6 = new Obj("aguja", 600, 700, "images/aguja.jpeg");
+let o7 = new Obj("jeringa", 700, 700, "images/aguja_18.jpeg");
 
 let list = [o1, o2, o3, o4, o5, o6, o7];
 if (localStorage.getItem("objetos")) {
@@ -57,7 +58,8 @@ function agregarObj() {
         title: `Agregar objeto`,
         html: `<label>Nombre:</label> <input id="name-input" class="swal2-input" type="text" autofocus>
         <label>Precio:</label><input id="pri-input" class="swal2-input" type="number" step="0.01">
-        <label>Stock:</label><input id="stock-input" class="swal2-input" type="number" step="1">`,
+        <label class="stock-label">Stock:</label><input id="stock-input" class="swal2-input stock-label" type="number" step="1">
+        `,
         showCancelButton: true,
         confirmButtonText: "Agregar",
         cancelButtonText: "Cancelar",
@@ -66,6 +68,7 @@ function agregarObj() {
             let name = document.getElementById("name-input").value.trim();
             let pri = parseFloat(document.getElementById("pri-input").value.trim());
             let stock = parseInt(document.getElementById("stock-input").value.trim());
+
 
             if (isNaN(pri) || isNaN(stock) || name === "") {
                 Swal.fire({
@@ -76,9 +79,7 @@ function agregarObj() {
                 return;
             }
 
-            let objeto = new Obj(name, pri, stock);
-
-            if (list.some((elemento) => elemento.name === objeto.name)) {
+            if (list.some((elemento) => elemento.name === name)) {
                 Swal.fire({
                     icon: "warning",
                     title: "Advertencia",
@@ -86,7 +87,11 @@ function agregarObj() {
                 });
                 return;
             }
-
+            let objeto = {
+                name: name,
+                pri: pri,
+                stock: stock
+            }
             list.push(objeto);
             localStorage.setItem("objetos", JSON.stringify(list));
 
@@ -95,7 +100,7 @@ function agregarObj() {
                 title: "Objeto Agregado",
                 text: `Se agregó el objeto ${objeto.name} a la lista`,
                 timer: 3000,
-            });
+            });        
         }
     });
 }
@@ -147,13 +152,38 @@ if (filtrar) filtrar.addEventListener("click", buscarObj);
 let log = document.getElementById("login");
 if(log) log.addEventListener("click",login);
 
+let carroarray = JSON.parse(localStorage.getItem("carro")) || [];
+function agregarcarro(objeto){
+    
+    if (carroarray.some((item) => item.name === objeto.name)) {
+        Swal.fire({
+            icon: "warning",
+            title: "Advertencia",
+            text: "Este producto ya está en el carrito.",
+        });
+        return;
+    }
+    carroarray.push(objeto);
+    localStorage.setItem("carro", JSON.stringify(carroarray)); 
 
+    Swal.fire({
+        icon: "success",
+        title: "Producto agregado",
+        text: `El producto ${objeto.name} fue agregado al carrito.`,
+        timer: 2000,
+    });
 
+    
+}
 let objeto = document.getElementById("object");
 list.forEach(obj =>{
     let card = document.createElement("div");
     card.style.border = "1px solid #ccc";
     card.style.textAlign = "center";
+    
+    let btn = document.createElement("button");
+    btn.textContent = "agregar";
+    btn.addEventListener("click", () => agregarcarro(obj));
 
     
     let nombre = document.createElement("h2");
@@ -168,6 +198,7 @@ list.forEach(obj =>{
     card.appendChild(nombre);
     card.appendChild(precio);
     card.appendChild(stock);
+    card.appendChild(btn);
     objeto.appendChild(card);
 }
 
