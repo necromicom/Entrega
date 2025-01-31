@@ -1,37 +1,3 @@
-function login() {
-    let identificar = true;
-    let intentos = 1;
-
-    do {
-        let user = prompt("Ingresar usuario:");
-
-        if (user == null || user === "") {
-            alert("Usuario inválido. Inténtelo nuevamente.");
-            intentos++;
-        } else if (user === "admin" || user === "user") {
-            let pass = prompt("Ingresar contraseña:");
-
-            if (pass == null || pass === "") {
-                alert("No se ingresó ninguna contraseña. Inténtelo nuevamente.");
-                intentos++;
-            } else if (pass === "1234") {
-                alert(`Bienvenido, usuario: ${user}`);
-                identificar = false;
-            } else {
-                alert("Contraseña incorrecta. Inténtelo nuevamente.");
-                intentos++;
-            }
-        } else {
-            alert("Usuario invalido Inténtelo nuevamente.");
-            intentos++;
-        }
-
-        if (intentos > 3) {
-            alert("Usted superó los 3 intentos. Intente de nuevo");
-            identificar = false;
-        }
-    } while (identificar);
-}
 
 const Obj = function (name, pri, stock, img) {
     this.name = name;
@@ -45,8 +11,8 @@ let o2 = new Obj("mascara facial", 15000, 10, "images/mascara.jpeg");
 let o3 = new Obj("crema para manos", 5000, 20, "images/cremamanos.jpeg");
 let o4 = new Obj("aposito", 500, 500, "images/apositos.jpeg");
 let o5 = new Obj("Gasa", 500, 1000, "images/gasa.jpeg");
-let o6 = new Obj("aguja", 600, 700, "images/aguja.jpeg");
-let o7 = new Obj("jeringa", 700, 700, "images/aguja_18.jpeg");
+let o6 = new Obj("aguja", 600, 700, "images/aguja_18.jpeg");
+let o7 = new Obj("jeringa", 700, 700, "images/jeringa.jpeg");
 
 let list = [o1, o2, o3, o4, o5, o6, o7];
 if (localStorage.getItem("objetos")) {
@@ -56,10 +22,23 @@ if (localStorage.getItem("objetos")) {
 function agregarObj() {
     Swal.fire({
         title: `Agregar objeto`,
-        html: `<label>Nombre:</label> <input id="name-input" class="swal2-input" type="text" autofocus>
-        <label>Precio:</label><input id="pri-input" class="swal2-input" type="number" step="0.01">
-        <label class="stock-label">Stock:</label><input id="stock-input" class="swal2-input stock-label" type="number" step="1">
-        `,
+        html: ` <div class="input-group">
+            <label>Nombre:</label>
+            <input id="name-input" class="swal2-input" type="text" autofocus>
+        </div>
+        
+        <div class="input-group">
+            <label>Precio:</label>
+            <input id="pri-input" class="swal2-input" type="number" step="0.01">
+            <label>Stock:</label>
+            <input id="stock-input" class="swal2-input" type="number" step="1">
+        </div>
+
+        <div class="input-group">
+            <label>Imagen:</label>
+            <input id="img-input" class="swal2-input" type="file">
+        </div>
+    `,
         showCancelButton: true,
         confirmButtonText: "Agregar",
         cancelButtonText: "Cancelar",
@@ -68,6 +47,16 @@ function agregarObj() {
             let name = document.getElementById("name-input").value.trim();
             let pri = parseFloat(document.getElementById("pri-input").value.trim());
             let stock = parseInt(document.getElementById("stock-input").value.trim());
+            let imagen = document.getElementById("img-input").files[0];
+
+            if (!imagen){
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Falta imagen",
+                })
+                return;
+            }
 
 
             if (isNaN(pri) || isNaN(stock) || name === "") {
@@ -87,20 +76,27 @@ function agregarObj() {
                 });
                 return;
             }
-            let objeto = {
-                name: name,
-                pri: pri,
-                stock: stock
-            }
-            list.push(objeto);
-            localStorage.setItem("objetos", JSON.stringify(list));
+            let reader = new FileReader();
+            reader.readAsDataURL(imagen);
+            reader.onload = function () {
+                let objeto = {
+                    name: name,
+                    pri: pri,
+                    stock: stock,
+                    img: reader.result 
+                };
 
-            Swal.fire({
-                icon: "success",
-                title: "Objeto Agregado",
-                text: `Se agregó el objeto ${objeto.name} a la lista`,
-                timer: 3000,
-            });        
+                list.push(objeto);
+                localStorage.setItem("objetos", JSON.stringify(list));
+
+                Swal.fire({
+                    icon: "success",
+                    title: "Objeto Agregado",
+                    text: `Se agregó el objeto ${objeto.name} a la lista.`,
+                    timer: 3000,
+                });
+            };
+            
         }
     });
 }
@@ -149,8 +145,6 @@ let filtrar = document.getElementById("filtrar");
 if (filtrar) filtrar.addEventListener("click", buscarObj);
 
 
-let log = document.getElementById("login");
-if(log) log.addEventListener("click",login);
 
 let carroarray = JSON.parse(localStorage.getItem("carro")) || [];
 function agregarcarro(objeto){
@@ -180,6 +174,13 @@ list.forEach(obj =>{
     let card = document.createElement("div");
     card.style.border = "1px solid #ccc";
     card.style.textAlign = "center";
+    card.style.backgroundColor = "#69766c";
+    card.style.content = "border-box"
+
+    let img = document.createElement("img");
+    img.src = obj.img;
+    img.alt = obj.name;
+    img.style.width = "4vph";
     
     let btn = document.createElement("button");
     btn.textContent = "agregar";
@@ -195,6 +196,7 @@ list.forEach(obj =>{
     let stock = document.createElement("p");
     stock.textContent = `Stock: ${obj.stock}`;
 
+    card.appendChild(img);
     card.appendChild(nombre);
     card.appendChild(precio);
     card.appendChild(stock);
@@ -204,3 +206,61 @@ list.forEach(obj =>{
 
 )
 
+
+function krro() {
+    let carro = JSON.parse(localStorage.getItem("carro")) || [];
+    let price = carro.reduce((acc, obj) => acc + obj.pri, 0); 
+    fetch('https://dolarapi.com/v1/dolares/blue')
+    .then(response => response.json())
+    .then(data => {
+        let price2 = (price / data.venta).toFixed(2);
+        if (carro.length > 0) {
+            Swal.fire({
+                
+                title: `Carrito de Compras`,
+                html: `
+                    <p>En el carrito hay <strong>${carro.length}</strong> objetos.</p>
+                    <p>El valor total de los objetos seleccionados es <strong>$${price}</strong></p>
+                    <p>el valor en dolares de tu compra es <strong>$${price2}</strong></p>
+                    <button id="pay-button" class="swal2-confirm swal2-styled">Pagar</button>
+                `,
+                showConfirmButton: false,
+                didOpen: () => {
+                    document.getElementById("pay-button").addEventListener("click", () => {
+                        Swal.fire({
+                            icon: "info",
+                            title: "Procesando pago...",
+                            text: "Por favor, espera un momento.",
+                            timer: 2000, 
+                            showConfirmButton: false,
+                            didClose: ()=>{
+                                setTimeout(() => {
+                                    Swal.fire({
+                                        icon: "success",
+                                        title: "Pago realizado con éxito",
+                                        text: "Gracias por tu compra.",
+                                        timer: 3000,
+                                        showConfirmButton: false
+                                    });
+                                    localStorage.removeItem("carro");
+                                }, 2000);
+                            }
+                        });
+                    });
+                }
+            });
+    
+        } else {
+            Swal.fire({
+                icon: "warning",
+                title: "Advertencia",
+                text: "No hay nada en el carrito.",
+            });
+        }
+    });
+    
+}
+
+
+let cart = document.getElementById("carro");
+cart.addEventListener("click",krro);

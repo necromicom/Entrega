@@ -1,3 +1,31 @@
-.stock-label{
-    display: block;
+.input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: space-between;
+}
+.input-group label{
+    max-width: 150px;
+}
+.input-group input{
+    flex: 1;
+}
+*{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    text-decoration: none;
+}
+#body{
+    max-width: 1400px;
+    box-sizing: content-box;
+    background-color: #15b93b;
+}
+#header{
+    width: 100%;
+    height: 2rem;
+    background-color: azure;
+}
+#header img{
+    height: 100%;
 }
